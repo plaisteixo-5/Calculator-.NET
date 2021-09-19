@@ -1,10 +1,10 @@
 INSERT INTO
     [User]
 VALUES (
-    'Felipe Fon',
-    'teste@teste.com',
+    'Jorge',
+    'jorge@teste.com',
     'HASH',
-    'Bx Microsoft MVP',
+    'Jorge é um deus da programação mlk',
     'https://',
-    'felipe-fon'
+    'simplismente-jorge'
 )

@@ -13,76 +13,20 @@ namespace Blog
         {
             var connection = new SqlConnection(CONNECTION_STRING);
             connection.Open();
-            DeleteUser();
+            var post = new Post()
+            {
+                CategoryId = 1,
+                AuthorId = 1,
+                Title = "Teste",
+                Summary = "Testando",
+                Body = "Corpo de teste",
+                Slug = "slug-teste",
+                CreateDate = new DateTime(2020, 9, 18),
+                LastUpdateDate = new DateTime(2020, 9, 18)
+            };
+
+            Controller.ReadPostWithTag(connection);
             connection.Close();
-        }
-        public static void ReadUsers(SqlConnection connection)
-        {
-            var repository = new UserRepository(connection);
-            var users = repository.Get();
-
-            foreach (var user in users) Console.WriteLine(user.Name);
-        }
-        public static void ReadUser()
-        {
-            using (var connection = new SqlConnection(CONNECTION_STRING))
-            {
-                var user = connection.Get<User>(1);
-
-                Console.WriteLine(user.Name);
-            }
-        }
-        public static void CreateUser()
-        {
-
-            var user = new User()
-            {
-                Bio = "Equipa Balta.io",
-                Email = "hello@balta.io",
-                Image = "https://...",
-                Name = "Equipe balta.io",
-                PasswordHash = "HASH",
-                Slug = "equipe-balta"
-            };
-
-            using (var connection = new SqlConnection(CONNECTION_STRING))
-            {
-                var valueReturned = connection.Insert<User>(user);
-
-                Console.WriteLine(valueReturned);
-            }
-        }
-        public static void UpdateUser()
-        {
-
-            var user = new User()
-            {
-                Id = 2,
-                Bio = "Equipa | Balta.io",
-                Email = "hello@balta.io",
-                Image = "https://...",
-                Name = "Equipe de suporte balta.io",
-                PasswordHash = "HASH",
-                Slug = "equipe-balta"
-            };
-
-            using (var connection = new SqlConnection(CONNECTION_STRING))
-            {
-                var valueReturned = connection.Update<User>(user);
-
-                Console.WriteLine(valueReturned);
-            }
-        }
-        public static void DeleteUser()
-        {
-
-            using (var connection = new SqlConnection(CONNECTION_STRING))
-            {
-                var user = connection.Get<User>(2);
-                var valueReturned = connection.Delete<User>(user);
-
-                Console.WriteLine(valueReturned);
-            }
         }
     }
 }

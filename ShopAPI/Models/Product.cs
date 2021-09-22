@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ShopAPI.Models
 {
@@ -17,6 +18,7 @@ namespace ShopAPI.Models
 
         [Required]
         [Range(1, int.MaxValue)]
+        [Column(TypeName = "decimal(18, 4)")]
         public decimal Price { get; set; }
 
         [Required]

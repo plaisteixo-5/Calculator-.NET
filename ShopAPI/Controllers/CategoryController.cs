@@ -1,44 +1,46 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ShopAPI.Data;
+using System;
+using Microsoft.AspNetCore.Authorization;
 using ShopAPI.Models;
+using ShopAPI.Data;
 
-namespace ShopAPI.Controllers
+namespace Backoffice.Controllers
 {
-    // https://localhost:5001/categories
-    // http://localhost:5000/
-    [Route("categories")]
-    public class CategoryController : ControllerBase
+    [Route("v1/categories")]
+    public class CategoryController : Controller
     {
         [HttpGet]
         [Route("")]
-        public async Task<ActionResult<List<Category>>> Get(
-            [FromServices] DataContext context
-        )
+        [AllowAnonymous]
+        [ResponseCache(VaryByHeader = "User-Agent", Location = ResponseCacheLocation.Any, Duration = 30)]
+        // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public async Task<ActionResult<List<Category>>> Get([FromServices] DataContext context)
         {
             var categories = await context.Categories.AsNoTracking().ToListAsync();
-            return Ok(categories);
+            return categories;
         }
 
         [HttpGet]
         [Route("{id:int}")]
-        public async Task<ActionResult<Category>> GetById(
-            int id,
-            [FromServices] DataContext context)
+        [AllowAnonymous]
+        public async Task<ActionResult<Category>> GetById([FromServices] DataContext context, int id)
         {
             var category = await context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-            return Ok(category);
+            return category;
         }
 
         [HttpPost]
         [Route("")]
+        // [Authorize(Roles = "employee")]
+        [AllowAnonymous]
         public async Task<ActionResult<Category>> Post(
-            [FromBody] Category model,
-            [FromServices] DataContext context)
+            [FromServices] DataContext context,
+            [FromBody] Category model)
         {
+            // Verifica se os dados são válidos
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -46,65 +48,65 @@ namespace ShopAPI.Controllers
             {
                 context.Categories.Add(model);
                 await context.SaveChangesAsync();
-
-                return Ok(model);
+                return model;
             }
-            catch
+            catch (Exception)
             {
-                return BadRequest(new { message = "Wasn't possible to create the category" });
+                return BadRequest(new { message = "Não foi possível criar a categoria" });
+
             }
         }
 
         [HttpPut]
         [Route("{id:int}")]
+        [Authorize(Roles = "employee")]
         public async Task<ActionResult<Category>> Put(
+            [FromServices] DataContext context,
             int id,
-            [FromBody] Category model,
-            [FromServices] DataContext context)
+            [FromBody] Category model)
         {
             // Verifica se o ID informado é o mesmo do modelo
-            if (model.Id != id)
-                return NotFound(new { message = "Category not founded!" });
+            if (id != model.Id)
+                return NotFound(new { message = "Categoria não encontrada" });
 
+            // Verifica se os dados são válidos
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
-                context.Entry<Category>(model).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                context.Entry<Category>(model).State = EntityState.Modified;
                 await context.SaveChangesAsync();
-
-                return Ok(model);
+                return model;
             }
             catch (DbUpdateConcurrencyException)
             {
-                return BadRequest(new { message = "This register was already changed!" });
-            }
-            catch
-            {
-                return BadRequest(new { message = "Wasn't possible to create the category" });
+                return BadRequest(new { message = "Não foi possível atualizar a categoria" });
+
             }
         }
 
         [HttpDelete]
         [Route("{id:int}")]
+        [Authorize(Roles = "employee")]
         public async Task<ActionResult<Category>> Delete(
-            int id,
-            [FromServices] DataContext context)
+            [FromServices] DataContext context,
+            int id)
         {
             var category = await context.Categories.FirstOrDefaultAsync(x => x.Id == id);
             if (category == null)
-                return NotFound(new { message = "The category wasn't founded" });
+                return NotFound(new { message = "Categoria não encontrada" });
 
             try
             {
                 context.Categories.Remove(category);
                 await context.SaveChangesAsync();
-                return Ok(category);
+                return category;
             }
             catch (Exception)
             {
-                return BadRequest(new { message = "Wasn't possible to delete the category" });
+                return BadRequest(new { message = "Não foi possível remover a categoria" });
+
             }
         }
     }

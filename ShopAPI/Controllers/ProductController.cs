@@ -3,75 +3,58 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ShopAPI.Data;
+using Microsoft.AspNetCore.Authorization;
 using ShopAPI.Models;
+using ShopAPI.Data;
 
-namespace ShopAPI.Controllers
+namespace Backoffice.Controllers
 {
-    [Route("products")]
-    public class ProductController : ControllerBase
+    [Route("v1/products")]
+    public class ProductController : Controller
     {
         [HttpGet]
         [Route("")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Product>>> Get([FromServices] DataContext context)
         {
-            var products = await context.
-                Products.
-                Include(x => x.Category).
-                AsNoTracking().
-                ToListAsync();
+            var products = await context.Products.Include(x => x.Category).AsNoTracking().ToListAsync();
             return products;
         }
 
         [HttpGet]
         [Route("{id:int}")]
-        public async Task<ActionResult<Product>> Get(
-            [FromServices] DataContext context,
-            int id)
+        [AllowAnonymous]
+        public async Task<ActionResult<Product>> GetById([FromServices] DataContext context, int id)
         {
-            var product = await context.
-                Products.
-                Include(x => x.Category).
-                AsNoTracking().
-                FirstOrDefaultAsync(x => x.Id == id);
+            var product = await context.Products.Include(x => x.Category).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
             return product;
         }
 
         [HttpGet]
         [Route("categories/{id:int}")]
-        public async Task<ActionResult<List<Product>>> GetByCategory(
-            [FromServices] DataContext context,
-            int id)
+        [AllowAnonymous]
+        public async Task<ActionResult<List<Product>>> GetByCategory([FromServices] DataContext context, int id)
         {
-
-            var products = await context.
-                Products.
-                Include(x => x.Category).
-                AsNoTracking().
-                Where(x => x.CategoryId == id).
-                ToListAsync();
+            var products = await context.Products.Include(x => x.Category).AsNoTracking().Where(x => x.CategoryId == id).ToListAsync();
             return products;
         }
 
         [HttpPost]
         [Route("")]
+        [Authorize(Roles = "employee")]
         public async Task<ActionResult<Product>> Post(
-            [FromBody] Product model,
-            [FromServices] DataContext context)
+            [FromServices] DataContext context,
+            [FromBody] Product model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            try
+            if (ModelState.IsValid)
             {
                 context.Products.Add(model);
                 await context.SaveChangesAsync();
-
-                return Ok(model);
+                return model;
             }
-            catch
+            else
             {
-                return BadRequest(new { message = "Wasn't possible to create the category" });
+                return BadRequest(ModelState);
             }
         }
     }

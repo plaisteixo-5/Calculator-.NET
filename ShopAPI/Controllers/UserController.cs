@@ -81,7 +81,7 @@ namespace Backoffice.Controllers
             }
             catch (Exception)
             {
-                return BadRequest(new { message = "Não foi possível criar o usuário" });
+                return BadRequest(new { message = "Não foi possível modificar o usuário" });
 
             }
         }

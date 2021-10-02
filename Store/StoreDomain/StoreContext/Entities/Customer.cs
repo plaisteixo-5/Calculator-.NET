@@ -2,10 +2,11 @@
 using StoreDomain.StoreContext.ValueObjects;
 using System.Collections.Generic;
 using System.Linq;
+using FluentValidator;
 
 namespace StoreDomain.StoreContext.Entities
 {
-    public class Customer
+    public class Customer : Notifiable
     {
         private readonly IList<Address> _addresses;
         public Customer(
@@ -31,9 +32,6 @@ namespace StoreDomain.StoreContext.Entities
             _addresses.Add(address);
         }
 
-        public override string ToString()
-        {
-            return Name.ToString();
-        }
+        public override string ToString() => Name.ToString();
     }
 }

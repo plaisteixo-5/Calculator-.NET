@@ -16,7 +16,6 @@ namespace StoreTests.Entities
         private Product _piscina;
         public OrderTests()
         {
-
             var name = new Name("Felipe", "Fon");
             var document = new Document("46718115533");
             var email = new Email("teste@gmail.com");
@@ -27,8 +26,8 @@ namespace StoreTests.Entities
             _keyboard = new Product("Teclado Gamer ", "Teclado Gamer", "teclado.jpg", 100M, 10);
             _monitor = new Product("Monitor Gamer ", "Monitor Gamer", "monitor.jpg", 100M, 10);
             _piscina = new Product("Piscina Gamer ", "Piscina Gamer", "piscina.jpg", 100M, 10);
-
         }
+
         // Criar novo pedido
         [TestMethod]
         public void ShouldCreateOrderWhenValid()
@@ -118,6 +117,12 @@ namespace StoreTests.Entities
             }
         }
 
-
+        public void CreateCustomer()
+        {
+            // 1 - Verificar se email e CPF já existem
+            // 2 -Criar os VO's
+            // 3 - Validar entidades e VO's
+            // 4 - Inserir cliente no banco
+        }
     }
 }

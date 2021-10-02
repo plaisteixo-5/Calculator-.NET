@@ -5,4 +5,7 @@
   <ItemGroup>
     <PackageReference Include="FluentValidator" Version="2.0.4" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\StoreShared\StoreShared.csproj" />
+  </ItemGroup>
 </Project>

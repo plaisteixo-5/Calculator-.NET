@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using FluentValidator;
 
 namespace StoreDomain.StoreContext.Entities
 {
-    public class OrderItem
+    public class OrderItem : Notifiable
     {
         public OrderItem(Product product, decimal quantity)
         {
@@ -12,13 +13,12 @@ namespace StoreDomain.StoreContext.Entities
             Price = product.Price;
 
             if (product.QuantityOnHand < quantity)
-            {
-                Console.WriteLine("Produto fora de estoque");
-            }
+                AddNotification("Quantity", "Produto fora de estoque.");
+
+            product.DecreaseQuantity(quantity);
         }
         public Product Product { get; private set; }
         public decimal Quantity { get; private set; }
         public decimal Price { get; private set; }
-        public IDictionary<string, string> Notifications { get; set; }
     }
 }

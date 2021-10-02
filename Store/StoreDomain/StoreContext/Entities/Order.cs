@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using StoreDomain.StoreContext.Enums;
-using FluentValidation;
 using System.Linq;
+using FluentValidator;
 
 namespace StoreDomain.StoreContext.Entities
 {
-    public class Order
+    public class Order : Notifiable
     {
         private readonly IList<OrderItem> _items;
         private readonly IList<Delivery> _deliveries;
@@ -20,26 +20,34 @@ namespace StoreDomain.StoreContext.Entities
             _deliveries = new List<Delivery>();
         }
         public Customer Customer { get; private set; }
+
         public string Number { get; private set; }
         public DateTime CreateDate { get; private set; }
         public EOrderStatus Status { get; private set; }
         public IReadOnlyCollection<OrderItem> Items => _items.ToArray();
         public IReadOnlyCollection<Delivery> Deliveries => _deliveries.ToArray();
 
-        public void AddItem(OrderItem item)
+        public void AddItem(Product product, decimal quantity)
         {
             // Valida o item
             // Adiciona o pedido
+            if (quantity > product.QuantityOnHand)
+            {
+                AddNotification("OrderItem", $"Produto {product.Title} não tem {quantity} itens no estoque.");
+            }
+
+            var item = new OrderItem(product, quantity);
             _items.Add(item);
         }
-        public void AddDeliverry(Delivery delivery)
+        public void AddDelivery(Delivery delivery)
         {
             _deliveries.Add(delivery);
         }
         public void Place()
         {
+            Number = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8).ToUpper();
             if (_items.Count == 0)
-                Console.WriteLine("Order", "Este pedido não possui itens.");
+                AddNotification("Order", "Este pedido não possui itens.");
         }
 
         public void Pay()
@@ -48,7 +56,7 @@ namespace StoreDomain.StoreContext.Entities
 
         }
 
-        public void Shipp()
+        public void Ship()
         {
             var delivires = new List<Delivery>();
             var count = 1;

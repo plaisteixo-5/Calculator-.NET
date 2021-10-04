@@ -1,9 +1,10 @@
 using System;
 using StoreDomain.StoreContext.Enums;
+using StoreShared.Entities;
 
 namespace StoreDomain.StoreContext.Entities
 {
-    public class Address
+    public class Address : Entity
     {
         public Address(
             string street,

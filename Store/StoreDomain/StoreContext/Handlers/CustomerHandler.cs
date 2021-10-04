@@ -2,6 +2,8 @@ using System;
 using FluentValidator;
 using StoreDomain.StoreContext.Commands.CustomerCommands.Inputs;
 using StoreDomain.StoreContext.Entities;
+using StoreDomain.StoreContext.Repositories;
+using StoreDomain.StoreContext.Services;
 using StoreDomain.StoreContext.ValueObjects;
 using StoreShared.Commands;
 
@@ -12,11 +14,23 @@ namespace StoreDomain.StoreContext.Handlers
     ICommandHandler<CreateCustomerCommand>,
     ICommandHandler<AddAddressCommand>
     {
+        private readonly ICustomerRepository _repository;
+        private readonly IEmailService _emailService;
+        public CustomerHandler(ICustomerRepository repository, IEmailService emailService)
+        {
+            _repository = repository;
+            _emailService = emailService;
+        }
+
         public ICommandResult Handle(CreateCustomerCommand command)
         {
             // Verifica se o CPF Já existe
+            if (_repository.CheckDocument(command.Document))
+                AddNotification("Document", "CPF já cadastrado no banco.");
 
             // Verifica se o Email já existe
+            if (_repository.CheckEmail(command.Email))
+                AddNotification("Email", "Email já cadastrado no banco.");
 
             // Cria os VO's
             var name = new Name(command.FirstName, command.LastName);
@@ -32,12 +46,16 @@ namespace StoreDomain.StoreContext.Handlers
             AddNotifications(email.Notifications);
             AddNotifications(customer.Notifications);
 
+            if (Invalid)
+                return null;
+
             // Persiste o cliente
+            _repository.Save(customer);
 
             // Enviar um E-mail de boas vindas
-
+            _emailService.Send(email.Address, "Jorge", "Tô com sono", "Queria dormir mané!");
             // Retornar o resultado para a tela
-            return new CreateCustomerCommandResult(Guid.NewGuid(), name.ToString(), email.Address);
+            return new CreateCustomerCommandResult(customer.Id, name.ToString(), email.Address);
         }
 
         public ICommandResult Handle(AddAddressCommand command)

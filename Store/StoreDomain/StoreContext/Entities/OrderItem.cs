@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using FluentValidator;
+using StoreShared.Entities;
 
 namespace StoreDomain.StoreContext.Entities
 {
-    public class OrderItem : Notifiable
+    public class OrderItem : Entity
     {
         public OrderItem(Product product, decimal quantity)
         {

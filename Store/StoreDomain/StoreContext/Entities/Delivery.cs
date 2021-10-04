@@ -1,9 +1,10 @@
 using System;
 using StoreDomain.StoreContext.Enums;
+using StoreShared.Entities;
 
 namespace StoreDomain.StoreContext.Entities
 {
-    public class Delivery
+    public class Delivery : Entity
     {
         public Delivery(DateTime estimatedDeliveryDate)
         {
@@ -22,7 +23,6 @@ namespace StoreDomain.StoreContext.Entities
 
         public void Cancel()
         {
-            // if (Status == EDeliveryStatus.Delivered)
             Status = EDeliveryStatus.Canceled;
         }
     }

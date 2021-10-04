@@ -1,6 +1,8 @@
+using StoreShared.Entities;
+
 namespace StoreDomain.StoreContext.Entities
 {
-    public class Product
+    public class Product : Entity
     {
         public Product(
             string title,

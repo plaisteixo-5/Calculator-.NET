@@ -1,24 +1,30 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using StoreDomain.StoreContext.Handlers;
+using StoreDomain.StoreContext.Repositories;
+using StoreDomain.StoreContext.Services;
+using StoreInfra.Services;
+using StoreInfra.StoreContext.DataContexts;
+using StoreInfra.StoreContext.Repositories;
 
 namespace StoreApi
 {
     public class Startup
     {
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc(options => options.EnableEndpointRouting = false);
+            // No scoped, ele vai verificar se tem algum na memória e vai utilizar. Isso por transação.
+            services.AddScoped<BaltaDataContext, BaltaDataContext>();
+            // No transient sempre que for solicitado um repository será instanciado um novo.
+            services.AddTransient<ICustomerRepository, CustomerRepository>();
+            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<CustomerHandler, CustomerHandler>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -28,13 +34,14 @@ namespace StoreApi
 
             app.UseRouting();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
-            });
+            app.UseMvc();
+            // app.UseEndpoints(endpoints =>
+            // {
+            //     endpoints.MapGet("/", async context =>
+            //     {
+            //         await context.Response.WriteAsync("Hello World from startup!");
+            //     });
+            // });
         }
     }
 }

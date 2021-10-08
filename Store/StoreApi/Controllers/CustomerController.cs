@@ -11,7 +11,7 @@ using StoreShared.Commands;
 
 namespace StoreApi.Controllers
 {
-    public class CustomerController
+    public class CustomerController : Controller
     {
         private readonly ICustomerRepository _repository;
         private readonly CustomerHandler _handler;
@@ -23,6 +23,8 @@ namespace StoreApi.Controllers
 
         [HttpGet]
         [Route("v1/customers")]
+        [ResponseCache(Duration = 60)] // Adiciona um cash control de 60 minutos
+        // Cache-Controle: public,max-age=60
         public IEnumerable<ListCustomerQueryResult> Get()
         {
 
@@ -44,7 +46,7 @@ namespace StoreApi.Controllers
         }
 
         [HttpGet]
-        [Route("v1/customers/{id:int}")]
+        [Route("v3/customers/{id:int}")]
         public IEnumerable<ListCustomerOrderQueryResult> GetOrders(Guid id)
         {
             return _repository.GetOrders(id);
@@ -52,10 +54,9 @@ namespace StoreApi.Controllers
 
         [HttpPost]
         [Route("v1/customers")]
-        public object Post([FromBody] CreateCustomerCommand command)
+        public ICommandResult Post([FromBody] CreateCustomerCommand command)
         {
             var result = (CreateCustomerCommandResult)_handler.Handle(command);
-            if (_handler.Invalid) return _handler.Notifications;
 
             return result;
         }

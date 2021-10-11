@@ -1,7 +1,4 @@
 namespace DomainShared.Commands
 {
-    public interface ICommand
-    {
-        bool Validate();
-    }
+    public interface ICommand { }
 }

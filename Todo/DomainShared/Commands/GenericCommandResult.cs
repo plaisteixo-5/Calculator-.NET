@@ -1,6 +1,4 @@
-using DomainShared.Commands;
-
-namespace Domain.Commands
+namespace DomainShared.Commands
 {
     public class GenericCommandResult : ICommandResult
     {

@@ -7,9 +7,8 @@ namespace Domain.Entities
     {
         public TodoItem(
             string title,
-            bool done,
-            DateTime date,
-            string user)
+            string user,
+            DateTime date)
         {
             Title = title;
             Done = false;

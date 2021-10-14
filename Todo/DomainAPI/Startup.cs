@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Domain.Handlers;
 using Domain.Repositories;
 using DomainInfra.Contexts;
+using DomainInfra.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

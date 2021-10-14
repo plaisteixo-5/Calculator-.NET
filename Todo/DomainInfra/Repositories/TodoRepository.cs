@@ -2,14 +2,23 @@ using System;
 using System.Collections.Generic;
 using Domain.Entities;
 using Domain.Repositories;
+using DomainInfra.Contexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace DomainInfra.Repositories
 {
     public class TodoRepository : ITodoRepository
     {
+        private readonly DataContext _context;
+
+        public TodoRepository(DataContext context)
+        {
+            _context = context;
+        }
         public void Create(TodoItem todo)
         {
-            throw new NotImplementedException();
+            _context.Todos.Add(todo);
+            _context.SaveChanges();
         }
 
         public IEnumerable<TodoItem> GetAll(string user)
@@ -39,7 +48,8 @@ namespace DomainInfra.Repositories
 
         public void Update(TodoItem todo)
         {
-            throw new NotImplementedException();
+            _context.Entry(todo).State = EntityState.Modified;
+            _context.SaveChanges();
         }
     }
 }

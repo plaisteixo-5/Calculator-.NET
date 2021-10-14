@@ -25,6 +25,10 @@ namespace Domain.Entities
         {
             Done = false;
         }
+        public void MarkAsDone()
+        {
+            Done = true;
+        }
         public void UpdateTitle(string title)
         {
             Title = title;

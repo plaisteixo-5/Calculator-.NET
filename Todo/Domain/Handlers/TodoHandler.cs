@@ -24,7 +24,7 @@ namespace Domain.Handlers
         {
             command.Validate();
 
-            if (command.Valid)
+            if (!command.Valid)
                 return new GenericCommandResult(
                     false,
                     "O comando passado está errado",

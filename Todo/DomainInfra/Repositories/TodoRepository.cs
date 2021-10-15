@@ -59,7 +59,11 @@ namespace DomainInfra.Repositories
 
         public IEnumerable<TodoItem> GetByPeriod(string user, DateTime date, bool done)
         {
-            throw new NotImplementedException();
+            return _context.
+                Todos.
+                AsNoTracking()
+                .Where(TodoQueries.GetByPeriod(user, date, done))
+                .OrderBy(x => x.Date);
         }
 
         public void Update(TodoItem todo)

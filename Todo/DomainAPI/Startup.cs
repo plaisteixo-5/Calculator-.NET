@@ -31,7 +31,7 @@ namespace DomainAPI
 
             // services.AddDbContext<DataContext>(opt => opt.UseInMemoryDatabase("Databse"));
             services.AddDbContext<DataContext>(opt => opt.UseSqlServer(
-                Configuration.GetConnectionString("connectionSrting")));
+                Configuration.GetConnectionString("connectionString")));
 
             services.AddTransient<ITodoRepository, TodoRepository>();
             services.AddTransient<TodoHandler, TodoHandler>();

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Domain.Entities;
+using Domain.Queries;
 using Domain.Repositories;
 using DomainInfra.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +25,11 @@ namespace DomainInfra.Repositories
 
         public IEnumerable<TodoItem> GetAll(string user)
         {
-            throw new NotImplementedException();
+            return _context.
+                Todos.
+                AsNoTracking()
+                .Where(TodoQueries.GetAll(user))
+                .OrderBy(x => x.Date);
         }
 
         public IEnumerable<TodoItem> GetAllDone(string user)
